@@ -10,25 +10,18 @@ Phase 2: Add client photos → 16 classes (using Phase 1 weights)
 """
 
 # ══════════════════════════════════════════════════════════════════════════════
-#  CONFIGURATION — edit these before running
+#  CONFIGURATION 
 # ══════════════════════════════════════════════════════════════════════════════
 
 ROBOFLOW_API_KEY = os.getenv("ROBOFLOW_API_KEY")
 
 if not ROBOFLOW_API_KEY:
     raise ValueError("❌ Please set ROBOFLOW_API_KEY as environment variable")
-    
+
 YOUR_WORKSPACE   = "YOUR_WORKSPACE_SLUG" # your Roboflow workspace slug (visible in URL after login)
 
 PHASE        = 1                # 1 = first training | 2 = add new classes
-PHASE1_PT    = "phase1_best.pt" # only used when PHASE = 2 (upload this to Colab)
-
-# ── How to get correct workspace/project/version values ───────────────────────
-# 1. Go to each Roboflow Universe URL below
-# 2. Click "Fork Dataset" → copies to YOUR workspace
-# 3. Click "Download Dataset" → YOLOv8 → "Show download code"
-# 4. Copy the workspace/project/version from that snippet into PHASE1_DATASETS
-# ─────────────────────────────────────────────────────────────────────────────
+PHASE1_PT    = "phase1_best.pt" # only used when PHASE = 2 
 
 EPOCHS       = 100
 IMGSZ        = 640

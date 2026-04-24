@@ -1,3 +1,6 @@
 models/*.pt
 outputs/
 __pycache__/
+datasets_raw/
+datasets_merged/
+runs/
