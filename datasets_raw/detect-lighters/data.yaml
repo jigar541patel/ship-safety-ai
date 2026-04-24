@@ -1,0 +1,12 @@
+names:
+- lighter
+nc: 1
+roboflow:
+  license: CC BY 4.0
+  project: detect-lighters
+  url: https://universe.roboflow.com/freeze-mtroi/detect-lighters/dataset/1
+  version: 1
+  workspace: freeze-mtroi
+test: ../test/images
+train: ../train/images
+val: ../valid/images

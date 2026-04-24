@@ -1,0 +1,12 @@
+names:
+- match
+nc: 1
+roboflow:
+  license: CC BY 4.0
+  project: match-hxwnh
+  url: https://universe.roboflow.com/robotarm/match-hxwnh/dataset/1
+  version: 1
+  workspace: robotarm
+test: ../test/images
+train: ../train/images
+val: ../valid/images

@@ -1,0 +1,13 @@
+names:
+- compressor
+- corrosion detected
+nc: 2
+roboflow:
+  license: Private
+  project: compressor-with-corrosion
+  url: https://app.roboflow.com/rohit-workspace/compressor-with-corrosion/1
+  version: 1
+  workspace: rohit-workspace
+test: ../test/images
+train: ../train/images
+val: ../valid/images

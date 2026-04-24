@@ -1,0 +1,14 @@
+names:
+- mask_weared_incorrect
+- with_mask
+- without_mask
+nc: 3
+roboflow:
+  license: MIT
+  project: mask-detection-8cpsa
+  url: https://universe.roboflow.com/gabriel-truong/mask-detection-8cpsa/dataset/1
+  version: 1
+  workspace: gabriel-truong
+test: ../test/images
+train: ../train/images
+val: ../valid/images

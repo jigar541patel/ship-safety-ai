@@ -1,0 +1,12 @@
+names:
+- smoke
+nc: 1
+roboflow:
+  license: CC BY 4.0
+  project: smoking-detection-3gefl
+  url: https://universe.roboflow.com/kyunghee-university-ada5d/smoking-detection-3gefl/dataset/4
+  version: 4
+  workspace: kyunghee-university-ada5d
+test: ../test/images
+train: ../train/images
+val: ../valid/images

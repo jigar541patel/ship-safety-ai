@@ -1,0 +1,18 @@
+names:
+- Boots
+- Ear-Protection
+- Glasses
+- Gloves
+- Helmet
+- Mask
+- Vest
+nc: 7
+roboflow:
+  license: CC BY 4.0
+  project: safety-equipment-detector-l2ple
+  url: https://universe.roboflow.com/qsolalishankh/safety-equipment-detector-l2ple/dataset/1
+  version: 1
+  workspace: qsolalishankh
+test: ../test/images
+train: ../train/images
+val: ../valid/images
