@@ -1,25 +1,23 @@
 #!/usr/bin/env python3
 """
-Painting Mantra Safety — YOLO Training Script
-=============================================
-Run this in Google Colab (free T4 GPU recommended).
+Painting Mantra Safety - Sship Safety Compliance
+ -----------------------------------------------------------------------------
 
-Phase 1: Train on 8 Roboflow datasets → 11 classes
+Phase 1: Train on 8 datasets → 11 classes
 Phase 2: Add client photos → 16 classes (using Phase 1 weights)
 
 """
 
-# ══════════════════════════════════════════════════════════════════════════════
+# -----------------------------------------------------------------------------
 #  CONFIGURATION 
-# ══════════════════════════════════════════════════════════════════════════════
+#  -----------------------------------------------------------------------------
 
 ROBOFLOW_API_KEY = os.getenv("ROBOFLOW_API_KEY")
 
 if not ROBOFLOW_API_KEY:
     raise ValueError("❌ Please set ROBOFLOW_API_KEY as environment variable")
 
-YOUR_WORKSPACE   = "YOUR_WORKSPACE_SLUG" # your Roboflow workspace slug (visible in URL after login)
-
+YOUR_WORKSPACE   = "YOUR_WORKSPACE_SLUG" 
 PHASE        = 1                # 1 = first training | 2 = add new classes
 PHASE1_PT    = "phase1_best.pt" # only used when PHASE = 2 
 
@@ -28,9 +26,9 @@ IMGSZ        = 640
 BATCH        = 16
 BASE_MODEL   = "yolov8n.pt"    # nano = best for mobile TFLite
 
-# ══════════════════════════════════════════════════════════════════════════════
+#  -----------------------------------------------------------------------------
 #  STEP 1 — Install dependencies
-# ══════════════════════════════════════════════════════════════════════════════
+#  -----------------------------------------------------------------------------
 
 import subprocess, sys
 
@@ -47,15 +45,10 @@ from pathlib import Path
 from roboflow import Roboflow
 from ultralytics import YOLO
 
-# ══════════════════════════════════════════════════════════════════════════════
+# -----------------------------------------------------------------------------
 #  STEP 2 — Dataset definitions + class remapping
-# ══════════════════════════════════════════════════════════════════════════════
+# -----------------------------------------------------------------------------
 
-# Each entry: (workspace, project_name, version, {original_class → target_class})
-# Set target to None to DROP that class (e.g. generic "person" labels)
-#
-# ⚠️  If a download fails, check the exact workspace/project slug on Roboflow Universe.
-#     Open the dataset URL → look at the URL path for the exact slug.
 
 PHASE1_DATASETS = [
     # 🚬 Cigarettes / Smoking
@@ -157,10 +150,6 @@ PHASE1_DATASETS = [
     ),
 ]
 
-# ── Final unified class list ───────────────────────────────────────────────────
-# Order matters — index = class ID baked into the trained model.
-# Violations (🔴) first, compliant (🟢) after.
-# Must match _violationClasses in yolo_detector.dart
 
 PHASE1_CLASSES = [
     "cigarette",    # 0  🔴 violation
@@ -185,9 +174,9 @@ PHASE2_EXTRA_CLASSES = [
     "msds",             # 15 🟢 compliant (Material Safety Data Sheet)
 ]
 
-# ══════════════════════════════════════════════════════════════════════════════
+#  -----------------------------------------------------------------------------
 #  STEP 3 — Download datasets from Roboflow
-# ══════════════════════════════════════════════════════════════════════════════
+#  -----------------------------------------------------------------------------
 
 def download_datasets(rf: Roboflow, datasets: list, out_dir: Path) -> list:
     """Download each dataset, return list of (path, remap_dict)."""
@@ -208,9 +197,9 @@ def download_datasets(rf: Roboflow, datasets: list, out_dir: Path) -> list:
 
     return downloaded
 
-# ══════════════════════════════════════════════════════════════════════════════
+#  -----------------------------------------------------------------------------
 #  STEP 4 — Merge all datasets into one with remapped class IDs
-# ══════════════════════════════════════════════════════════════════════════════
+#  -----------------------------------------------------------------------------
 
 def get_classes_from_yaml(dataset_path: Path) -> list:
     """Parse class names from a dataset's data.yaml."""
@@ -322,9 +311,9 @@ def write_data_yaml(merged_dir: Path, classes: list) -> Path:
     print(f"   {len(classes)} classes: {classes}")
     return yaml_path
 
-# ══════════════════════════════════════════════════════════════════════════════
+#  -----------------------------------------------------------------------------
 #  STEP 5 — Train
-# ══════════════════════════════════════════════════════════════════════════════
+#  -----------------------------------------------------------------------------
 
 def train(data_yaml: Path, phase: int):
     last_pt   = Path(f"runs/detect/painting_safety_phase{phase}/weights/last.pt")
@@ -377,9 +366,9 @@ def train(data_yaml: Path, phase: int):
     print(f"   best.pt  → {best_pt}")
     print(f"   last.pt  → {last_pt}")
 
-# ══════════════════════════════════════════════════════════════════════════════
-#  STEP 6 — Export to TFLite (float32) for Flutter app
-# ══════════════════════════════════════════════════════════════════════════════
+#  -----------------------------------------------------------------------------
+#  STEP 6 — Export to TFLite (float32) for Mobile app
+#  -----------------------------------------------------------------------------
 
 def export_tflite(phase: int):
     best_pt = Path(f"runs/detect/painting_safety_phase{phase}/weights/best.pt")
@@ -407,17 +396,6 @@ def export_tflite(phase: int):
     shutil.copy(best_pt, pt_dst)
     print(f"✅ Weights → {pt_dst}  (use this as PHASE1_PT in Phase {phase + 1})")
 
-    print(f"""
-╔══════════════════════════════════════════════════════╗
-║  NEXT STEPS                                          ║
-╠══════════════════════════════════════════════════════╣
-║  1. Download  {str(tflite_dst):<38}║
-║  2. Copy to   assets/models/  in Flutter project     ║
-║  3. Update model path in yolo_detector.dart          ║
-║  4. Save      {str(pt_dst):<38}║
-║     (needed for Phase {phase + 1} training)                     ║
-╚══════════════════════════════════════════════════════╝
-""")
 
     # Print updated _violationClasses for yolo_detector.dart
     print("── Update _violationClasses in yolo_detector.dart ──────────────")
@@ -430,9 +408,9 @@ def export_tflite(phase: int):
         print(f"  '{c}',")
     print("};")
 
-# ══════════════════════════════════════════════════════════════════════════════
+# -----------------------------------------------------------------------------
 #  MAIN
-# ══════════════════════════════════════════════════════════════════════════════
+#  -----------------------------------------------------------------------------
 
 def main():
     print("=" * 60)
@@ -451,22 +429,18 @@ def main():
     classes = PHASE1_CLASSES if PHASE == 1 else PHASE1_CLASSES + PHASE2_EXTRA_CLASSES
     print(f"\n📋 {len(classes)} classes: {classes}")
 
-    # ── Download ──
+
     downloaded = download_datasets(rf, PHASE1_DATASETS, raw_dir)
     if not downloaded:
         print("❌ No datasets downloaded — check API key and dataset slugs.")
         return
 
-    # ── Merge ──
     merge_datasets(downloaded, classes, merged_dir)
 
-    # ── data.yaml ──
     data_yaml = write_data_yaml(merged_dir, classes)
 
-    # ── Train ──
     train(data_yaml, PHASE)
 
-    # ── Export ──
     export_tflite(PHASE)
 
 
